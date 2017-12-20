@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<script type="text/javascript" src="JSmol.min.js"></script>
+<!--<script type="text/javascript" src="IEDBJSmol20151203.js"></script>-->
+<script type="text/javascript" src="IEDBJSmol20161014.js"></script>
+<center>
+<table><tr><td align=center>
+<script type="text/javascript">
+
+var PDB_ID = window.opener.document.form.PDB_ID.value;
+var mhc_chain1_type = window.opener.document.form.MHC_Chain1_type.value;
+var mhc_chain2_type = window.opener.document.form.MHC_Chain2_type.value;
+var mhc_chain1_ID = window.opener.document.form.MHC_Chain1_ID.value;
+var mhc_chain2_ID = window.opener.document.form.MHC_Chain2_ID.value;
+var epitopeChain = window.opener.document.form.Epitope_Chain.value;
+var epitopeResID = window.opener.document.form.EpitopeResID.value;
+var mhcResID = window.opener.document.form.MHCResID.value;
+var curEpitopeResID = window.opener.document.form.CurEpitopeResID.value;
+var curMhcResID = window.opener.document.form.CurMHCResID.value;
+
+showMHC(PDB_ID, epitopeResID, curEpitopeResID, mhcResID, curMhcResID, mhc_chain1_ID, mhc_chain2_ID, mhc_chain1_type, mhc_chain2_type, epitopeChain);
+
+</script>
+</td></tr></table>
+</head>
+
+</html>

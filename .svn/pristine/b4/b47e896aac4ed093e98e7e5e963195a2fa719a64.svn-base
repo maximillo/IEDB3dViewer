@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<script type="text/javascript" src="JSmol.min.js"></script>
+	<!--<script type="text/javascript" src="IEDBJSmol20151203.js"></script>-->
+	<!--<script type="text/javascript" src="IEDBJSmol20161002.js"></script>-->
+	<script type="text/javascript" src="Iedb3dViewer.js"></script>
+
+	<script type="text/javascript">
+		/*
+		Uncomment to use posted variables and not 'default' stuff;
+		
+		var PDB_ID = window.opener.document.form.PDB_ID.value;
+		var chain1_type = window.opener.document.form.Chain1_type.value;
+		var chain2_type = window.opener.document.form.Chain2_type.value;
+		var mhc_chain1_type = window.opener.document.form.MHC_Chain1_type.value;
+		var mhc_chain2_type = window.opener.document.form.MHC_Chain2_type.value;
+		var chain1_ID = window.opener.document.form.TCR_Chain1_ID.value;
+		var chain2_ID = window.opener.document.form.TCR_Chain2_ID.value;
+		var mhc_chain1_ID = window.opener.document.form.MHC_Chain1_ID.value;
+		var mhc_chain2_ID = window.opener.document.form.MHC_Chain2_ID.value;
+		var epitopeChain = window.opener.document.form.Epitope_Chain.value;
+		var epitopeMHCResID = window.opener.document.form.EpitopeMHCResID.value;
+		var epitopeTCRResID = window.opener.document.form.EpitopeTCRResID.value;
+		var mhcEpitopeResID = window.opener.document.form.MHCEpitopeResID.value;
+		var tcrEpitopeResID = window.opener.document.form.TCREpitopeResID.value;
+		*/
+		
+		//showTCR(PDB_ID, epitopeMHCResID, epitopeTCRResID, mhcEpitopeResID, tcrEpitopeResID, chain1_ID, chain2_ID, mhc_chain1_ID, mhc_chain2_ID, chain1_type, chain2_type, mhc_chain1_type, mhc_chain2_type, epitopeChain);
+
+		window.onload = function(){
+			
+		/*
+			Uncomment to use posted variables and not 'default' stuff;
+			
+			var TCRTest = new Iedb3dViewer(
+			{
+				type : 'TCR',
+				pdbId : PDB_ID
+			},
+			{	
+				residueData: {
+					epitopeMHCResID : epitopeMHCResID,
+					mhcEpitopeResID : mhcEpitopeResID,
+					epitopeTCRResID : epitopeTCRResID,
+					tcrEpitopeResID : tcrEpitopeResID
+				},
+				chainData : {
+					chain1_type : chain1_type,
+					chain2_type : chain2_type,
+					mhc_chain1_type : mhc_chain1_type,
+					mhc_chain2_type : mhc_chain2_type,
+					chain1_ID : chain1_ID,
+					chain2_ID : chain2_ID,
+					mhc_chain1_ID : mhc_chain1_ID,
+					mhc_chain2_ID : mhc_chain2_ID,
+					epitopeChain : epitopeChain
+				}
+			}
+			);			
+			
+		*/
+
+		// Comment out and uncomment above to use posted variables.
+		
+			var TCRTest = new Iedb3dViewer(
+				{
+				   "type":"TCR",
+				   "pdbId":"3KXF",
+				   "dataFormat":"IEDBComplex"
+				},
+				{
+				   "residueData":{
+					  //"epitopeMHCResID":"1:Q,2:Q,3:Q,4:Q,5:Q,10:Q,11:Q,12:Q,13:Q",
+					  "epitopeMHCResID":"Q: L1, P2, E3, P4, L5, P6, Q7, G8, Q9, L10, T11, A12, Y13",
+					  //"mhcEpitopeResID":"5:A,7:A,9:A,59:A,62:A,63:A,66:A,67:A,69:A,70:A,73:A,74:A,76:A,77:A,80:A,81:A,84:A,95:A,97:A,99:A,116:A,123:A,143:A,146:A,147:A,150:A,152:A,155:A,156:A,159:A,163:A,167:A,171:A",
+					  "mhcEpitopeResID":"A: M5, Y7, Y9, Y59, R62, N63, I66, F67, A69, N70, T73, Y74, E76, S77, N80, L81, Y84, I95, R97, Y99, S116, Y123, T143, K146, W147, A150, V152, A155, R156, Y159, L163, W167, Y171",
+					  //"epitopeTCRResID":"4:Q,5:Q,6:Q,7:Q,8:Q,9:Q",
+					  "epitopeTCRResID":"Q: P4, L5, P6, Q7, G8, Q9",
+					  //"tcrEpitopeResID":"32:D,94:D,95:D,96:D,97:D,98:D,100:D,27:E,28:E,29:E,30:E,31:E,33:E,94:E"
+					  "tcrEpitopeResID":"D: Y32, S94, G95, F96, Y97, N98, D100; E: M27, N28, H29, N30, S31, Y33, P94/"
+				   },
+				   "chainData":{
+					  "chain1_type":"alpha",
+					  "chain2_type":"beta",
+					  "mhc_chain1_type":"alpha",
+					  "mhc_chain2_type":"b2m",
+					  "chain1_ID":"D",
+					  "chain2_ID":"E",
+					  "mhc_chain1_ID":"A",
+					  "mhc_chain2_ID":"B",
+					  "epitopeChain":"Q"
+				   }		
+				}
+			);		
+		
+			document.getElementById("viewerTD").innerHTML =	TCRTest.getFullViewerHTML();	
+		  
+		};	
+	</script>
+</head>
+
+<body>
+	<table>
+		<tr>
+			<td align='center' id='viewerTD' />
+		</tr>
+	</table>
+</body>
+</html>

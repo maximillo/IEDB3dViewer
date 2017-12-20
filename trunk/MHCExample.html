@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<script type="text/javascript" src="JSmol.min.js"></script>
+	<!--<script type="text/javascript" src="IEDBJSmol20151129.js"></script>-->
+	<!--<script type="text/javascript" src="IEDBJSmol20161002.js"></script>-->
+	<script type="text/javascript" src="Iedb3dViewer.js"></script>
+
+	<script type="text/javascript">
+		
+		//Uncomment to use posted variables and not 'default' stuff;
+		
+		var PDB_ID = window.opener.document.form.PDB_ID.value;
+		var mhc_chain1_type = window.opener.document.form.MHC_Chain1_type.value;
+		var mhc_chain2_type = window.opener.document.form.MHC_Chain2_type.value;
+		var mhc_chain1_ID = window.opener.document.form.MHC_Chain1_ID.value;
+		var mhc_chain2_ID = window.opener.document.form.MHC_Chain2_ID.value;
+		var epitopeChain = window.opener.document.form.Epitope_Chain.value;
+		var epitopeResID = window.opener.document.form.EpitopeResID.value;
+		var mhcResID = window.opener.document.form.MHCResID.value;
+		
+		
+		//showMHC(PDB_ID, epitopeResID, mhcResID, mhc_chain1_ID, mhc_chain2_ID, mhc_chain1_type, mhc_chain2_type, epitopeChain);
+
+		window.onload = function(){
+			 
+			
+			//Uncomment to use posted variables and not 'default' stuff;
+			
+			var MHCTest = new Iedb3dViewer(
+			{
+				type : 'MHC',
+				pdbId : PDB_ID,
+				dataFormat:"IEDBComplex"
+			},
+			{	
+				residueData: {
+					epitopeResID : epitopeResID,
+					mhcResID : mhcResID
+				},
+				chainData : {
+					mhc_chain1_type : mhc_chain1_type,
+					mhc_chain2_type : mhc_chain2_type,
+					mhc_chain1_ID : mhc_chain1_ID,
+					mhc_chain2_ID : mhc_chain2_ID,
+					epitopeChain : epitopeChain
+				}
+			}
+			);
+			
+			
+		
+			/*
+			// Comment out and uncomment above to use posted variables.
+		
+			
+			var MHCTest = new Iedb3dViewer(
+			{
+			   "type":"MHC",
+			   "pdbId":"1D9K",
+			   "dataFormat":"IEDBComplex"
+			},
+			{
+			   "residueData":{
+				  //"epitopeResID":"131:P,132:P,133:P,134:P,135:P,136:P,137:P,138:P,139:P,140:P,141:P,142:P,143:P",
+				  "epitopeResID":"P: G131, N132, S133, H134, R135, G136, A137, I138, E139, W140, E141, G142, I143",
+				  //"mhcResID":"9:C,11:C,22:C,24:C,43:C,51:C,52:C,53:C,54:C,62:C,65:C,66:C,68:C,69:C,72:C,76:C,11:D,13:D,30:D,47:D,56:D,57:D,59:D,60:D,61:D,67:D,70:D,71:D,74:D,77:D,78:D,81:D,82:D,84:D,85:D"
+				  "mhcResID":"C: Y9, T11, Y22, F24, W43, L51, R52, R53, F54, N62, T65, G66, H68, N69, I72, R76; D: F11, P13, Y30, Y47, P56, D57, E59, Y60, W61, Y67, R70, T71, E74, T77, V78, H81, N82, K84A, T85"
+			   },
+			   "chainData":{
+				  "mhc_chain1_type":"alpha",
+				  "mhc_chain2_type":"beta",
+				  "mhc_chain1_ID":"C",
+				  "mhc_chain2_ID":"D",
+				  "epitopeChain":"P"
+			   }			
+			}
+			);
+			*/
+			
+			document.getElementById("viewerTD").innerHTML =	MHCTest.getFullViewerHTML();	
+		  
+		};	
+	</script>
+</head>
+
+<body>
+	<table>
+		<tr>
+			<td align='center' id='viewerTD' />
+		</tr>
+	</table>
+</body>
+</html>

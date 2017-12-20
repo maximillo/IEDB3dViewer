@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<script type="text/javascript" src="JSmol.min.js"></script>
+<!--<script type="text/javascript" src="IEDBJSmol20151203.js"></script>-->
+<script type="text/javascript" src="IEDBJSmol20161014.js"></script>
+<center>
+<table><tr><td align=center>
+<script type="text/javascript">
+
+var PDB_ID = window.opener.document.form.PDB_ID.value;
+var chain1_type = window.opener.document.form.Chain1_type.value;
+var chain2_type = window.opener.document.form.Chain2_type.value;
+var chain1_ID = window.opener.document.form.Antibody_Chain1.value;
+var chain2_ID = window.opener.document.form.Antibody_Chain2.value;
+var antigenChain = window.opener.document.form.Antigen_Chain.value;
+var epitopeResID = window.opener.document.form.EpitopeResID.value;
+var receptorResID = window.opener.document.form.ReceptorResID.value;
+var curEpitopeResID = window.opener.document.form.CurEpitopeResID.value;
+var curReceptorResID = window.opener.document.form.CurReceptorResID.value;
+
+// document.write(PDB_ID);
+
+showAntibody(PDB_ID, epitopeResID,curEpitopeResID, receptorResID, curReceptorResID, chain1_ID, chain2_ID, chain1_type, chain2_type, antigenChain);
+
+
+</script>
+</td></tr></table>
+</head>
+
+</html>

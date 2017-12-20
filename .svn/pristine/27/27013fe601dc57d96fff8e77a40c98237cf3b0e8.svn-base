@@ -1,0 +1,308 @@
+<script type="text/javascript" src="JSmol.min.js"></script>
+
+<script language="JavaScript">
+
+function showAntibodyPopup() {
+	var sURL = "AntibodyExample.html";
+	var popwin = window.open(sURL, "", "width=850,height=750,resizable,status,menubar,scrollbars");
+	popwin.focus();
+}
+
+function showTCRPopup() {
+	var sURL = "TCRExample.html";
+	var popwin = window.open(sURL, "", "width=850,height=750,resizable,status,menubar,scrollbars");
+	popwin.focus();
+}
+
+function showMHCPopup() {
+	var sURL = "MHCExample.html";
+	var popwin = window.open(sURL, "", "width=850,height=750,resizable,status,menubar,scrollbars");
+	popwin.focus();
+}
+
+</script>
+
+<?php
+
+// Retrive all required info from complex table using complex_id
+// Test each of the 3 different types of complex:
+
+// Antibody test
+// $COMPLEXID = '1356665';
+
+// $COMPLEXID = '1356223';
+// $COMPLEXID = '1355803';
+// $COMPLEXID = '1354979';
+$COMPLEXID = '1355413';
+
+
+//This is an example with multiple chain antigen
+// $COMPLEXID = '1355127';
+// $COMPLEXID = '1322630';
+
+// $COMPLEXID = '1357100';
+// $COMPLEXID = '1617379';
+// $COMPLEXID = '1354515';
+
+// TCR test
+// $COMPLEXID = '1354522';
+// $COMPLEXID = '1488216';
+
+// MHC test
+// $COMPLEXID = '1354243';
+
+//This is an example with multiple chain epitope, with one of the epitope chain overlaps
+//with the MHC-alpha chain, so the MHC-alpha will be "hidden" by the epitope presentation,
+//which is created after the MHC chain representation
+
+// $COMPLEXID = '1356174';
+
+// Parameters to connect to the iedb_public database, need to change when release it for public use
+
+$servername = "127.0.0.1";
+$port = 3306;
+$username = "root";
+$password = "MAXdev_2017";
+$dbname = "iedb_public";
+
+
+// Create connection
+$conn = new mysqli($servername, $username, $password, $dbname);
+// Check connection
+
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+} 
+
+function parseChain($a) {
+	//This function is a bit odd. Idealy, it should convert all the chains into :A,:B,:C...
+	//However, the IEDBJSmol wrapper somehow insist on having the first ":" pre-set in there,
+	//Therefore, I had to keep the first chain letter as it is and convert all the rest of them into :?
+	//Anyway, this is to make it work
+	
+	//Split chains if there are multiple chains involved
+	$chainList = str_split($a);
+	$numberOfChains = count($chainList);
+	if ($numberOfChains > 1) {
+		for($i=1;$i<$numberOfChains;$i++) {
+ 			$chainList[$i] = ":".$chainList[$i];
+		}
+	}
+	$finalString = implode(",",$chainList);
+// 	echo $finalString."<br>";
+	//return $finalString;
+	return $a;
+}
+
+function parseResidue($a) {
+
+	//Split at ";" if there are multiple chains involved
+	$chainList = explode(";",$a);
+	$finalList = array();
+	for($i=0;$i<count($chainList);$i++) {
+		
+		//echo $chainList[$i]."<br>";
+		$residueList = explode(":",$chainList[$i]);
+ 		//echo $residueList[0]."<br>";
+// This removes everything except for the chain ID just in case, theoretically, this does not need to be in here 
+// since the chain ID part is always only one character		
+ 		$residueList[0] = preg_replace("/[^a-zA-Z]/", "", $residueList[0]);
+//  		echo $residueList[0]."<br>";
+//  		echo $residueList[1]."<br>";
+		$resnumberList = explode(",",$residueList[1]);
+
+		for ($j=0;$j<count($resnumberList);$j++) {
+// 			echo $resnumberList[$j]."<br>";
+// This removes the parenthesis and what is in it
+			$resnumberList[$j] = preg_replace("/\([^)]+\)/", "", $resnumberList[$j]);
+// This removes everything except for the residue numbers
+			$resnumberList[$j] = preg_replace("/[^0-9]/", "", $resnumberList[$j]).":".$residueList[0];
+// 			echo $resnumberList[$j]."<br>";
+		} 
+		$finalList[$i] = implode(",",$resnumberList);
+	}	
+	
+	$finalString = implode(",",$finalList);
+// 	echo $finalString."<br><br>";
+	//return $finalString;
+	return $a;
+}
+
+
+// Query the complex table in database to get all the chainIDs and residues
+$sql = "SELECT complex_id,
+		pdb_id,
+		type_flag,
+		c1_type,
+		c2_type,
+		mhc_chain1,
+		mhc_chain2,
+		ab_c1_pdb_chain,
+		ab_c2_pdb_chain,
+		mhc_c1_pdb_chain, 
+		mhc_c2_pdb_chain, 
+		tcr_c1_pdb_chain,
+		tcr_c2_pdb_chain,
+		ant_pdb_chain,
+		e_pdb_chain,
+		e_residues,
+		calc_e_residues,
+		e_mhc_residues,
+		calc_e_mhc_residues,
+		mhc_e_residues,
+		calc_mhc_e_residues,
+		e_tcr_residues,
+		calc_e_tcr_residues,
+		tcr_e_residues,
+		calc_tcr_e_residues,
+		ab_ant_residues,
+		calc_ab_ant_residues
+ 		FROM complex where complex_id='".$COMPLEXID."'";
+
+
+// echo $sql."<br>";
+
+$result = $conn->query($sql);
+
+if ($result->num_rows > 0) {
+
+    // output data of each row
+    while($row = $result->fetch_assoc()) {
+    
+//Create the hidden form to post the values to the popup window   
+//     	echo "<form name=\"form\" method=\"post\" action=\"showAntibody.html\" onSubmit=\"showAntibodyPopup(); return false\">";
+// 		echo "<input type=\"hidden\" name=\"PDB_ID\" value=". $row["pdb_id"].">";
+// 		
+// 		iterate through all the chains but the antigen chain
+// 		$chainArray = array($row["c1_type"], $row["c2_type"], $row["mhc_chain1"], $row["mhc_chain2"]);
+// 		$i = 0;
+// 		foreach ($chainArray as $v) {
+// 		   	echo $chainArray[$i]."<br>";
+// 			echo "<input type=\"hidden\" name=\"Chain1_type\" value=". $chainArray[$i].">";
+//    			$i ++;
+// 		}
+
+     	if ($row["type_flag"] == "bcell") {
+     	
+ 			echo "Complex of ID " .$row["complex_id"]. " is an antibody <br>";
+ 			echo $row["pdb_id"]."<br>";
+ 			$ant_pdb_chain = parseChain($row["ant_pdb_chain"]);
+//  		echo $ant_pdb_chain;
+// 			echo gettype($row["e_residues"])."<br>";
+ 			$antigenResidues = parseResidue($row["calc_e_residues"]);
+ 			$curAntigenResidues = parseResidue($row["e_residues"]);
+ 			echo $antigenResidues."<br>";
+// 			echo $curAntigenResidues."<br>",
+ 			$abResidues = parseResidue($row["calc_ab_ant_residues"]);
+ 			$curAbResidues = parseResidue($row["ab_ant_residues"]);
+// 			echo $abResidues."<br>";
+// 			echo $curAbResidues."<br>";
+// 			echo $row["ab_c1_pdb_chain"]."<br>";
+// 			echo $row["ab_c2_pdb_chain"]."<br>";
+// 			echo $row["ant_pdb_chain"]."<br>";
+// 			echo $row["c1_type"]."<br>";
+// 			echo $row["c2_type"]."<br>";
+// 			print_r(explode(":",$row["e_residues"]));
+		
+			
+		// Create a hiden form to pass the values to the popup window	
+			echo "<form name=\"form\" method=\"post\" action=\"showAntibody.html\" onSubmit=\"showAntibodyPopup(); return false\">";
+			echo "<input type=\"hidden\" name=\"PDB_ID\" value=". $row["pdb_id"].">";
+			echo "<input type=\"hidden\" name=\"Chain1_type\" value=". $row["c1_type"].">";
+			echo "<input type=\"hidden\" name=\"Chain2_type\" value=". $row["c2_type"].">";
+			echo "<input type=\"hidden\" name=\"Antibody_Chain1\" value=". $row["ab_c1_pdb_chain"].">";
+			echo "<input type=\"hidden\" name=\"Antibody_Chain2\" value=". $row["ab_c2_pdb_chain"].">";
+// 			echo "<input type=\"hidden\" name=\"Antigen_Chain\" value=". $row["ant_pdb_chain"].">";
+			echo "<input type=\"hidden\" name=\"Antigen_Chain\" value=\"". $ant_pdb_chain."\">";
+			echo "<input type=\"hidden\" name=\"EpitopeResID\" value=\"". $antigenResidues."\">";
+			echo "<input type=\"hidden\" name=\"ReceptorResID\" value=\"". $abResidues."\">";
+			echo "<input type=\"hidden\" name=\"CurEpitopeResID\" value=\"". $curAntigenResidues."\">";
+			echo "<input type=\"hidden\" name=\"CurReceptorResID\" value=\"". $curAbResidues."\">";			
+			echo "<input type=\"button\" onClick=\"showAntibodyPopup()\" value=\"Load Antibody Structure\">";
+			echo "</form>". "<br>";
+			
+		} elseif ($row["type_flag"] == "tcell") {
+			echo "Complex of ID " .$row["complex_id"]. " is an TCR ". "<br>";
+			echo $row["pdb_id"]."<br>";
+			
+			$e_pdb_chain = parseChain($row["e_pdb_chain"]);
+			$epitopeMHCResidues = parseResidue($row["calc_e_mhc_residues"]);
+			$curEpitopeMHCResidues = parseResidue($row["e_mhc_residues"]);
+			echo $epitopeMHCResidues."<br>";
+
+			$epitopeTCRResidues = parseResidue($row["calc_e_tcr_residues"]);
+			$curEpitopeTCRResidues = parseResidue($row["e_tcr_residues"]);
+			echo $epitopeTCRResidues."<br>";
+			
+			$mhcEpitopeResidues = parseResidue($row["calc_mhc_e_residues"]);
+			$curMhcEpitopeResidues = parseResidue($row["mhc_e_residues"]);
+			echo $mhcEpitopeResidues."<br>";
+			
+			$tcrEpitopeResidues = parseResidue($row["calc_tcr_e_residues"]);
+			$curTcrEpitopeResidues = parseResidue($row["tcr_e_residues"]);
+			echo $tcrEpitopeResidues."<br>";
+// 			print_r(explode(":",$row["e_residues"]));
+			
+			
+		// Create a hiden form to pass the values to the popup window	
+			echo "<form name=\"form\" method=\"post\" action=\"showTCR.html\" onSubmit=\"showTCRPopup(); return false\">";
+			echo "<input type=\"hidden\" name=\"PDB_ID\" value=". $row["pdb_id"].">";
+			echo "<input type=\"hidden\" name=\"Chain1_type\" value=". $row["c1_type"].">";
+			echo "<input type=\"hidden\" name=\"Chain2_type\" value=". $row["c2_type"].">";
+			echo "<input type=\"hidden\" name=\"MHC_Chain1_type\" value=". $row["mhc_chain1"].">";
+			echo "<input type=\"hidden\" name=\"MHC_Chain2_type\" value=". $row["mhc_chain2"].">";
+			echo "<input type=\"hidden\" name=\"TCR_Chain1_ID\" value=". $row["tcr_c1_pdb_chain"].">";
+			echo "<input type=\"hidden\" name=\"TCR_Chain2_ID\" value=". $row["tcr_c2_pdb_chain"].">";			
+			echo "<input type=\"hidden\" name=\"MHC_Chain1_ID\" value=". $row["mhc_c1_pdb_chain"].">";
+			echo "<input type=\"hidden\" name=\"MHC_Chain2_ID\" value=". $row["mhc_c2_pdb_chain"].">";
+			echo "<input type=\"hidden\" name=\"Epitope_Chain\" value=\"". $e_pdb_chain."\">";
+			echo "<input type=\"hidden\" name=\"EpitopeMHCResID\" value=\"". $epitopeMHCResidues."\">";
+ 			echo "<input type=\"hidden\" name=\"EpitopeTCRResID\" value=\"". $epitopeTCRResidues."\">";
+			echo "<input type=\"hidden\" name=\"MHCEpitopeResID\" value=\"". $mhcEpitopeResidues."\">";	
+ 			echo "<input type=\"hidden\" name=\"TCREpitopeResID\" value=\"". $tcrEpitopeResidues."\">";
+ 			echo "<input type=\"hidden\" name=\"CurEpitopeMHCResID\" value=\"". $curEpitopeMHCResidues."\">";
+ 			echo "<input type=\"hidden\" name=\"CurEpitopeTCRResID\" value=\"". $curEpitopeTCRResidues."\">";
+			echo "<input type=\"hidden\" name=\"CurMHCEpitopeResID\" value=\"". $curMhcEpitopeResidues."\">";	
+ 			echo "<input type=\"hidden\" name=\"CurTCREpitopeResID\" value=\"". $curTcrEpitopeResidues."\">";
+			echo "<input type=\"button\" onClick=\"showTCRPopup()\" value=\"Load TCR Structure\">";
+			echo "</form>". "<br>";
+			
+			
+		} elseif ($row["type_flag"] == "mhc") {
+			echo "Complex of ID " .$row["complex_id"]. " is a MHC ". "<br>";
+			echo $row["pdb_id"]."<br>";					
+			$e_pdb_chain = parseChain($row["e_pdb_chain"]);
+			$epitopeResidues = parseResidue($row["calc_e_mhc_residues"]);
+			$curEpitopeResidues = parseResidue($row["e_mhc_residues"]);
+//			echo $antigenResidues."<br>";
+			$MHCResidues = parseResidue($row["calc_mhc_e_residues"]);
+			$curMHCResidues = parseResidue($row["mhc_e_residues"]);
+//			echo $abResidues."<br>";
+// 			print_r(explode(":",$row["e_residues"]));
+			
+			
+		// Create a hiden form to pass the values to the popup window	
+			echo "<form name=\"form\" method=\"post\" action=\"showMHC.html\" onSubmit=\"showMHCPopup(); return false\">";
+			echo "<input type=\"hidden\" name=\"PDB_ID\" value=". $row["pdb_id"].">";
+			echo "<input type=\"hidden\" name=\"MHC_Chain1_type\" value=". $row["mhc_chain1"].">";
+			echo "<input type=\"hidden\" name=\"MHC_Chain2_type\" value=". $row["mhc_chain2"].">";		
+			echo "<input type=\"hidden\" name=\"MHC_Chain1_ID\" value=". $row["mhc_c1_pdb_chain"].">";
+			echo "<input type=\"hidden\" name=\"MHC_Chain2_ID\" value=". $row["mhc_c2_pdb_chain"].">";
+			echo "<input type=\"hidden\" name=\"Epitope_Chain\" value=\"". $e_pdb_chain."\">";
+			echo "<input type=\"hidden\" name=\"EpitopeResID\" value=\"". $epitopeResidues."\">";
+			echo "<input type=\"hidden\" name=\"MHCResID\" value=\"". $MHCResidues."\">";		
+			echo "<input type=\"hidden\" name=\"CurEpitopeResID\" value=\"". $curEpitopeResidues."\">";
+			echo "<input type=\"hidden\" name=\"CurMHCResID\" value=\"". $curMHCResidues."\">";
+			echo "<input type=\"button\" onClick=\"showMHCPopup()\" value=\"Load MHC Structure\">";
+			echo "</form>". "<br>";
+		}
+		
+		break;
+    }
+
+    
+} else {
+    echo "0 results";
+}
+$conn->close();
+?>

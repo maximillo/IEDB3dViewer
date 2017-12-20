@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<script type="text/javascript" src="JSmol.min.js"></script>
+	<!--<script type="text/javascript" src="IEDBJSmol20151203.js"></script>-->
+	<!--<script type="text/javascript" src="IEDBJSmol20161002.js"></script>-->
+	<script type="text/javascript" src="Iedb3dViewer.js"></script>
+
+	<script type="text/javascript">
+		/*
+		Uncomment to use posted variables and not 'default' stuff;
+			
+		var PDB_ID = window.opener.document.form.PDB_ID.value;
+		var chain1_type = window.opener.document.form.Chain1_type.value;
+		var chain2_type = window.opener.document.form.Chain2_type.value;
+		var chain1_ID = window.opener.document.form.Antibody_Chain1.value;
+		var chain2_ID = window.opener.document.form.Antibody_Chain2.value;
+		var antigenChain = window.opener.document.form.Antigen_Chain.value;
+		var epitopeResID = window.opener.document.form.EpitopeResID.value;
+		var receptorResID = window.opener.document.form.ReceptorResID.value;
+		*/
+		
+		//showAntibody(PDB_ID, epitopeResID, receptorResID, chain1_ID, chain2_ID, chain1_type, chain2_type, antigenChain);
+
+		window.onload = function(){
+
+			/*
+			Uncomment to use posted variables and not 'default' stuff;
+			
+			var AntibodyTest = new Iedb3dViewer(
+			{
+				type : 'Antibody',
+				pdbId : PDB_ID
+			},
+			{	
+				residueData: {
+					epitopeResID : epitopeResID,
+					receptorResID : receptorResID,
+				},
+				chainData : {
+					chain1_type : chain1_type,
+					chain2_type : chain2_type,
+					chain1_ID : chain1_ID,
+					chain2_ID : chain2_ID,
+					antigenChain : antigenChain,
+				}
+			}
+			
+			);
+			*/
+
+			// Comment out and uncomment above to use posted variables.
+
+			var AntibodyTest = new Iedb3dViewer(
+			{
+			   "type":"Antibody",
+			   "pdbId":"2P45",
+			   "dataFormat":"IEDBComplex"
+			},
+			{
+			   "residueData":{
+				  //"epitopeResID":"60:A,61:A,62:A,63:A,64:A,68:A,69:A,70:A,71:A,73:A,76:A,110:A,111:A,112:A,115:A",
+				  "epitopeResID":"A: Q60, K61, N62, V63, A64, G68, Q69, T70, N71, Y73, Y76, C110, E111, G112, Y115",
+				  //"receptorResID":"27:B,29:B,30:B,31:B,32:B,33:B,99:B,100:B,101:B,104:B,106:B,107:B,108:B,109:B",
+				  "receptorResID":"B: Y27, Y29, T30, Y31, I32, Y33, G99, G100, Y101, R104, R106, T107, Y108, G109"
+			   },
+			   "chainData":{
+				  "chain1_type":"heavy",
+				  "chain2_type":"heavy",
+				  "chain1_ID":"B",
+				  "chain2_ID":null,
+				  "antigenChain":"A"
+			   }			
+			}
+			);
+			
+		
+			document.getElementById("viewerTD").innerHTML =	AntibodyTest.getFullViewerHTML();	
+		  
+		};	
+	</script>
+</head>
+
+<body>
+	<table>
+		<tr>
+			<td align='center' id='viewerTD' />
+		</tr>
+	</table>
+</body>
+</html>

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<script type="text/javascript" src="JSmol.min.js"></script>
+<!--<script type="text/javascript" src="IEDBJSmol20151203.js"></script>-->
+<script type="text/javascript" src="IEDBJSmol20161014.js"></script>
+<center>
+<table><tr><td align=center>
+<script type="text/javascript">
+
+var PDB_ID = window.opener.document.form.PDB_ID.value;
+var chain1_type = window.opener.document.form.Chain1_type.value;
+var chain2_type = window.opener.document.form.Chain2_type.value;
+var mhc_chain1_type = window.opener.document.form.MHC_Chain1_type.value;
+var mhc_chain2_type = window.opener.document.form.MHC_Chain2_type.value;
+var chain1_ID = window.opener.document.form.TCR_Chain1_ID.value;
+var chain2_ID = window.opener.document.form.TCR_Chain2_ID.value;
+var mhc_chain1_ID = window.opener.document.form.MHC_Chain1_ID.value;
+var mhc_chain2_ID = window.opener.document.form.MHC_Chain2_ID.value;
+var epitopeChain = window.opener.document.form.Epitope_Chain.value;
+var epitopeMHCResID = window.opener.document.form.EpitopeMHCResID.value;
+var epitopeTCRResID = window.opener.document.form.EpitopeTCRResID.value;
+var mhcEpitopeResID = window.opener.document.form.MHCEpitopeResID.value;
+var tcrEpitopeResID = window.opener.document.form.TCREpitopeResID.value;
+var curEpitopeMHCResID = window.opener.document.form.CurEpitopeMHCResID.value;
+var curEpitopeTCRResID = window.opener.document.form.CurEpitopeTCRResID.value;
+var curMhcEpitopeResID = window.opener.document.form.CurMHCEpitopeResID.value;
+var curTcrEpitopeResID = window.opener.document.form.CurTCREpitopeResID.value;
+
+showTCR(PDB_ID, epitopeMHCResID, curEpitopeMHCResID, epitopeTCRResID, curEpitopeTCRResID, mhcEpitopeResID, curMhcEpitopeResID, tcrEpitopeResID, curTcrEpitopeResID, chain1_ID, chain2_ID, mhc_chain1_ID, mhc_chain2_ID, chain1_type, chain2_type, mhc_chain1_type, mhc_chain2_type, epitopeChain);
+
+</script>
+</td></tr></table>
+</head>
+
+</html>
